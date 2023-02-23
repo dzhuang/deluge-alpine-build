@@ -1,0 +1,10 @@
+FROM lscr.io/linuxserver/deluge:latest
+
+RUN mkdir -p /pkgs/apk
+COPY /pkgs/apk/ /pkgs/apk/
+
+RUN \
+  apk add \
+		--no-cache \
+		--allow-untrusted /pkgs/apk/*/*.apk \
+	&& rm -rf /pkgs \

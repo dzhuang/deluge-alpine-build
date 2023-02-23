@@ -74,12 +74,14 @@ jobs:
           rm -rf pkgs/apk/x86_64/APKINDEX*
           ls -l pkgs/apk/x86_64
 
-      - uses: actions/upload-artifact@v3
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
         with:
           name: alpine-packages
           path: pkgs/apk/x86_64
 
-      - uses: marvinpinto/action-automatic-releases@latest
+      - name: Create release
+        uses: marvinpinto/action-automatic-releases@latest
         if: github.ref == 'refs/heads/main'
         with:
           prerelease: false
@@ -88,3 +90,14 @@ jobs:
           title: deluge-${{ env.BASED_ON_TAG_VERSION }} alpine/edge x86_64
           files: |
             pkgs/apk/x86_64/*
+
+      - name: Build & push Docker image
+        uses: mr-smithers-excellent/docker-build-push@v5
+        if: github.ref == 'refs/heads/main'
+        with:
+          image: ${{ secrets.DOCKER_USERNAME }}/docker-deluge
+          registry: ${{ secrets.DOCKER_REGISTRY }}
+          tags: ${{ env.BUILD_VERSION }}, latest
+          dockerfile: Dockerfile-deluge
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
