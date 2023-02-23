@@ -1,0 +1,89 @@
+name: BUILD ALPINE
+
+on:
+  push:
+    paths:
+      - '!README.md'
+      - '**/**'
+  pull_request:
+    paths:
+      - '!README.md'
+      - '**/**'
+  workflow_dispatch:
+
+env:
+  PATCH_FILE_NAME: "patch.diff"
+
+jobs:
+  build-image:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v3
+
+      - name: Prepare git dir
+        run: |
+          mkdir -p src
+
+      - name: Checkout Revision src
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          repository: "${{ secrets.REVISION_REPO }}"
+          ref: "${{ secrets.REVISION_BRANCH }}"
+          token: ${{ secrets.MY_TOKEN }}
+          path: src
+
+      - name: Set environment variable
+        working-directory: src
+        run: |
+          echo $(git describe --tags --match deluge-[0-9]*)
+          git fetch --tags origin
+
+          echo $(git describe --tags --match deluge-[0-9]*)
+          export VERSION=$(python3 version.py)
+          echo $VERSION
+          if [[ $VERSION == *"dev"* ]]; then
+            echo "$VERSION is not a release version, terminating GitHub Action."
+            exit 1
+          else
+            BASED_ON_TAG_VERSION=${VERSION:0:5}
+          fi
+
+          echo "BASED_ON_TAG_VERSION=$BASED_ON_TAG_VERSION" >> $GITHUB_ENV
+
+          # Use this to generate release tag
+          BUILD_VERSION=$(jq -r '.version' ../build.json)
+          echo "BUILD_VERSION=$BUILD_VERSION" >> $GITHUB_ENV
+
+          # Generate Patch
+          git diff deluge-$BASED_ON_TAG_VERSION -- . ":(exclude).github" ":(exclude)alpine" ":(exclude)Dockerfile" ":(exclude)README.md" ":(exclude)build.json" > ../alpine/${{ env.PATCH_FILE_NAME }}
+
+      - name: Build alpine deluge
+        run : |
+
+          # build Docker base image
+          docker build --target=alpine-builder .
+          docker build --target=alpine-apk-builder --tag="bulild:alpine-apk-builder" --build-arg VERSION=${{ env.BASED_ON_TAG_VERSION }} --build-arg PATCH=${{ env.PATCH_FILE_NAME }} .
+
+          CONTAINER_ID="$(docker create "bulild:alpine-apk-builder")"
+          docker cp "${CONTAINER_ID}:/pkgs/" .
+          docker rm "${CONTAINER_ID}"
+
+          rm -r pkgs/apk/x86_64/APKINDEX*
+          ls -l pkgs/apk/x86_64
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: alpine-packages
+          path: pkgs/apk/x86_64
+
+      - uses: marvinpinto/action-automatic-releases@latest
+        if: github.ref == 'refs/heads/main'
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: ${{ env.BUILD_VERSION }}
+          title: deluge-alpine-edge-x86_64-${{ env.BASED_ON_TAG_VERSION }}
+          files: |
+            pkgs/apk/x86_64/*
