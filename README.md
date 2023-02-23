@@ -12,7 +12,9 @@ If that's not the case for you, please consider use [linuxserver/deluge](https:/
 
 ### Used the docker image
 
-    docker push dzhuang/docker-deluge:latest
+    docker pull dzhuang/docker-deluge:latest
+
+Please navigate [linuxserver/deluge](https://hub.docker.com/r/linuxserver/deluge) to see on how to use the image.
 
 
 ### Changelog
