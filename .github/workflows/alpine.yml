@@ -71,7 +71,7 @@ jobs:
           docker cp "${CONTAINER_ID}:/pkgs/" .
           docker rm "${CONTAINER_ID}"
 
-          rm -r pkgs/apk/x86_64/APKINDEX*
+          rm -rf pkgs/apk/x86_64/APKINDEX*
           ls -l pkgs/apk/x86_64
 
       - uses: actions/upload-artifact@v3
@@ -82,8 +82,9 @@ jobs:
       - uses: marvinpinto/action-automatic-releases@latest
         if: github.ref == 'refs/heads/main'
         with:
+          prerelease: false
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           automatic_release_tag: ${{ env.BUILD_VERSION }}
-          title: deluge-alpine-edge-x86_64-${{ env.BASED_ON_TAG_VERSION }}
+          title: deluge-${{ env.BASED_ON_TAG_VERSION }} alpine/edge x86_64
           files: |
             pkgs/apk/x86_64/*
