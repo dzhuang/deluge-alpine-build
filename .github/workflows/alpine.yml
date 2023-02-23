@@ -12,7 +12,8 @@ on:
   workflow_dispatch:
 
 env:
-  PATCH_FILE_NAME: "patch.diff"
+  # This file must ends with .patch
+  PATCH_FILE_NAME: "0001.patch"
 
 jobs:
   build-image:

@@ -47,7 +47,7 @@ options="!check" # failing ui off-by-one size tests, segfault in another
 subpackages="$pkgname-doc $pkgname-gtk"
 source="http://download.deluge-torrent.org/source/${pkgver%.*}/deluge-$pkgver.tar.xz
 	deluge.desktop
-  $PATCH
+	$PATCH
 	"
 
 replaces="$pkgname-lang" # Overwrite removed subpackage
