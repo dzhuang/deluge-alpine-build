@@ -38,9 +38,9 @@ jobs:
       - name: Set environment variable
         working-directory: src
         run: |
-          echo $(git describe --tags --match deluge-[0-9]*)
           git fetch --tags origin
 
+          # echo $(git describe --tags --match deluge-[0-9]*)
           echo $(git describe --tags --match deluge-[0-9]*)
           export VERSION=$(python3 version.py)
           echo $VERSION
