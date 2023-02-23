@@ -58,7 +58,7 @@ jobs:
           echo "BUILD_VERSION=$BUILD_VERSION" >> $GITHUB_ENV
 
           # Generate Patch
-          git diff deluge-$BASED_ON_TAG_VERSION -- . ":(exclude).github" ":(exclude)alpine" ":(exclude)Dockerfile" ":(exclude)README.md" ":(exclude)build.json" > ../alpine/${{ env.PATCH_FILE_NAME }}
+          git diff deluge-$BASED_ON_TAG_VERSION -- . ":(exclude).github" ":(exclude)README.md" > ../alpine/${{ env.PATCH_FILE_NAME }}
 
       - name: Build alpine deluge
         run : |
