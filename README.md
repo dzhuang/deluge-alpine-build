@@ -18,5 +18,6 @@ Please navigate [linuxserver/deluge](https://hub.docker.com/r/linuxserver/deluge
 
 
 ### Changelog
-
-- deluge-2.1.1r1: Version hack to 1.3.15 and removed web UI login
+- deluge-2.1.1r1
+    - Package: Version hack to 1.3.15 and removed web UI login
+    - Docker image: Added YARSS2 plugin
