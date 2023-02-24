@@ -108,3 +108,17 @@ jobs:
           dockerfile: Dockerfile-deluge
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # ref: https://github.com/orgs/community/discussions/26323#discussioncomment-3343871
+      - uses: actions/github-script@v6
+        name: Trigger remote actions
+        if: github.ref == 'refs/heads/main'
+        with:
+          github-token: ${{ secrets.MY_TOKEN }}
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: '${{ secrets.REMOTE_REPO_OWNER }}',
+              repo: '${{ secrets.REMOTE_REPO }}',
+              workflow_id: '${{ secrets.REMOTE_REPO_WORKFLOW_ID }}',
+              ref: '${{ secrets.REMOTE_REPO_BRANCH }}'
+            })
