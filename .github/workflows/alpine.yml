@@ -94,7 +94,7 @@ jobs:
           prerelease: false
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           automatic_release_tag: ${{ env.BUILD_VERSION }}
-          title: deluge-${{ env.BASED_ON_TAG_VERSION }} alpine/edge x86_64
+          title: deluge-${{ env.BUILD_VERSION }} alpine/edge x86_64
           files: |
             pkgs/apk/x86_64/*
 
