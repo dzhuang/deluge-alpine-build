@@ -29,3 +29,13 @@ USER builder
 RUN cd /dist \
 	&& abuild checksum \
 	&& abuild -rv -P /pkgs/apk # 2>&1 > log.log #
+
+# This isolated stage builds YARSS2 in a lscr.io/linuxserver/deluge container
+FROM lscr.io/linuxserver/deluge:latest as plugin_builder
+
+RUN \
+  mkdir -p /plugins \
+  cd /tmp \
+  && git clone https://bitbucket.org/bendikro/deluge-yarss-plugin.git	\
+  && python3 setup.py bdist_egg \
+  && cp dist/*.egg /plugins/ \

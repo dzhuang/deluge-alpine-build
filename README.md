@@ -19,4 +19,4 @@ Please navigate [linuxserver/deluge](https://hub.docker.com/r/linuxserver/deluge
 
 ### Changelog
 
-- 1.0.0: Version hack to 1.3.15 and removed web UI login
+- deluge-2.1.1r1: Version hack to 1.3.15 and removed web UI login
