@@ -1,9 +1,9 @@
-name: BUILD ALPINE
+name: BUILD DEVELOP ALPINE
 
 on:
   push:
     branches:
-      - main
+      - devel
     paths:
       - '!README.md'
       - '**/**'
@@ -34,7 +34,7 @@ jobs:
         with:
           fetch-depth: 0
           repository: dzhuang/deluge
-          ref: "${{ secrets.REVISION_BRANCH }}"
+          ref: devel
           token: ${{ secrets.MY_TOKEN }}
           path: src
 
@@ -67,7 +67,7 @@ jobs:
           # Generate Patch
           git diff deluge-$BASED_ON_TAG_VERSION -- . ":(exclude).github" ":(exclude)README.md" > ../alpine/${{ env.PATCH_FILE_NAME }}
 
-          if [[ ${{ github.ref }} == 'refs/heads/main' ]]; then
+          if [[ ${{ github.ref }} == 'refs/heads/devel' ]]; then
             echo "PUSH_IMAGE=true" >> $GITHUB_ENV
           else
             echo "PUSH_IMAGE=false" >> $GITHUB_ENV
@@ -93,16 +93,16 @@ jobs:
           name: alpine-packages
           path: pkgs/apk/x86_64
 
-      - name: Create release
-        uses: marvinpinto/action-automatic-releases@latest
-        if: github.ref == 'refs/heads/main'
-        with:
-          prerelease: false
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: ${{ env.BUILD_VERSION }}
-          title: deluge-${{ env.BUILD_VERSION }} alpine/edge x86_64
-          files: |
-            pkgs/apk/x86_64/*
+      #- name: Create release
+      #  uses: marvinpinto/action-automatic-releases@latest
+      #  if: github.ref == 'refs/heads/main'
+      #  with:
+      #    prerelease: false
+      #    repo_token: "${{ secrets.GITHUB_TOKEN }}"
+      #    automatic_release_tag: ${{ env.BUILD_VERSION }}
+      #    title: deluge-${{ env.BUILD_VERSION }} alpine/edge x86_64
+      #    files: |
+      #      pkgs/apk/x86_64/*
 
       - name: Download Deluge YARSS2 plugin
         run : |
@@ -115,22 +115,22 @@ jobs:
         with:
           image: ${{ secrets.DOCKER_USERNAME }}/docker-deluge
           registry: ${{ secrets.DOCKER_REGISTRY }}
-          tags: ${{ env.BUILD_VERSION }}, latest
+          tags: devel-${{ env.BUILD_VERSION }}, devel-latest
           dockerfile: Dockerfile-deluge
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           pushImage: ${{ env.PUSH_IMAGE }}
 
-      # ref: https://github.com/orgs/community/discussions/26323#discussioncomment-3343871
-      - uses: actions/github-script@v6
-        name: Trigger remote actions
-        if: github.ref == 'refs/heads/main'
-        with:
-          github-token: ${{ secrets.MY_TOKEN }}
-          script: |
-            await github.rest.actions.createWorkflowDispatch({
-              owner: '${{ secrets.REMOTE_REPO_OWNER }}',
-              repo: '${{ secrets.REMOTE_REPO }}',
-              workflow_id: '${{ secrets.REMOTE_REPO_WORKFLOW_ID }}',
-              ref: '${{ secrets.REMOTE_REPO_BRANCH }}'
-            })
+      ## ref: https://github.com/orgs/community/discussions/26323#discussioncomment-3343871
+      #- uses: actions/github-script@v6
+      #  name: Trigger remote actions
+      #  if: github.ref == 'refs/heads/devel'
+      #  with:
+      #    github-token: ${{ secrets.MY_TOKEN }}
+      #    script: |
+      #      await github.rest.actions.createWorkflowDispatch({
+      #        owner: '${{ secrets.REMOTE_REPO_OWNER }}',
+      #        repo: '${{ secrets.REMOTE_REPO }}',
+      #        workflow_id: '${{ secrets.REMOTE_REPO_WORKFLOW_ID }}',
+      #        ref: '${{ secrets.REMOTE_REPO_BRANCH }}'
+      #      })
