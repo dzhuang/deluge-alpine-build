@@ -29,7 +29,7 @@ Please navigate [linuxserver/deluge](https://hub.docker.com/r/linuxserver/deluge
 Ref: [Make Your PeerID Your Choice.](https://www.sb-innovation.de/showthread.php?29320-Make-Your-PeerID-Your-Choice)
 
 ### Changelog
-- deluge-2.1.1r6
+- deluge-2.1.1r4
     - Allow usings options to set agent version and peer_id, via `Preferences` -> `Other` -> `Custom Deluge Agent`
     - Allow turning off web UI auth (no password login), via options via `Preferences` -> `Interface` -> `Skip Auth`. Use this at you own risk.
 
