@@ -24,7 +24,8 @@ Please navigate [linuxserver/deluge](https://hub.docker.com/r/linuxserver/deluge
 |utorrentMac 1.6.4| uTorrentMac/1640(27255)| -UM1640-|
 |utorrent 2.2.1 |uTorrent/2210(25110)| -UT2210-|
 |Transmission 2.11| Transmission/2.11| -TR2110-|
-|Deluge 1.3.5| Deluge/1350| -DE1350-|
+|Deluge 1.3.5| Deluge 1.3.5| -DE1350-|
+|Deluge 1.3.15| Deluge 1.3.15| -DE13F0-|
 
 Ref: [Make Your PeerID Your Choice.](https://www.sb-innovation.de/showthread.php?29320-Make-Your-PeerID-Your-Choice)
 
